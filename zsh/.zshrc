@@ -8,7 +8,6 @@ plugins=(
   git
   zsh-syntax-highlighting
   zsh-autosuggestions
-  bitwarden-cli
   fzf-tab
 )
 
@@ -24,7 +23,7 @@ alias ll='lsd -l'
 alias la='lsd -la'
 alias cat='bat'
 alias dotgit='/usr/bin/git --git-dir=$HOME/.dotfiles-repo.git/ --work-tree=$HOME'
-
+alias dev='z Dokumente/PhuDev'
 # Zoxide (smarter cd-Ersatz)
 eval "$(zoxide init zsh)"
 
@@ -40,4 +39,21 @@ if [ -d "$HOME/.spicetify" ]; then
   export SPICETIFY_USER="$HOME/.config/spicetify/User"
   export PATH="$PATH:$HOME/.spicetify"
 fi
-eval $(thefuck --alias)
+eval "$(thefuck --alias)"
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+
+# pnpm
+export PNPM_HOME="/home/einfachnurphu/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# Workmate 
+alias wm='z Dokumente/PhuDev/workmate'
+alias wm-ui='z Dokumente/PhuDev/workmate/ui'
+
+alias wm-bck='z Dokumente/PhuDev/workmate/backend'
