@@ -1,32 +1,32 @@
 #!/usr/bin/env bash
-# restore-thunderbird.sh — stellt TB-Einstellungen aus ~/.config/thunderbird-profile ins aktive Profil wieder her.
+# Restore Thunderbird (Flatpak oder native)
 
 set -e
 
+BASE_NATIVE="${HOME}/.thunderbird"
+BASE_FLATPAK="${HOME}/.var/app/org.mozilla.Thunderbird/.thunderbird"
 SRC="${HOME}/.config/thunderbird-profile"
 
-# 1) Ziel-Profil ermitteln
-find_profile_dest() {
-  local base="${HOME}/.thunderbird"
-  local p
+if [ -d "$BASE_FLATPAK" ]; then
+  BASE="$BASE_FLATPAK"
+elif [ -d "$BASE_NATIVE" ]; then
+  BASE="$BASE_NATIVE"
+else
+  echo "❌ Kein Thunderbird-Profil gefunden. Bitte Thunderbird einmal starten."
+  exit 1
+fi
 
-  p=$(find "$base" -maxdepth 1 -type d -name "*.default-release" | head -n1)
-  if [ -z "$p" ]; then
-    p=$(find "$base" -maxdepth 1 -type d -name "*.*" | grep -vE 'Crash Reports|Pending Pings' | head -n1)
-  fi
-  echo "$p"
-}
+[ -d "$SRC" ] || { echo "❌ Quelle $SRC existiert nicht."; exit 1; }
 
-[ -d "$SRC" ] || { echo "❌ Quelle $SRC existiert nicht. Erst Backup ausführen."; exit 1; }
+PROFILE=$(find "$BASE" -maxdepth 1 -type d -name "*.default-release" | head -n1)
+[ -n "$PROFILE" ] || PROFILE=$(find "$BASE" -maxdepth 1 -type d -name "*.*" | head -n1)
 
-DEST="$(find_profile_dest)"
-[ -n "$DEST" ] || { echo "❌ Kein Thunderbird-Profil gefunden. Starte Thunderbird einmal, damit ein Profil angelegt wird."; exit 1; }
+[ -n "$PROFILE" ] || { echo "❌ Kein Profilordner gefunden."; exit 1; }
 
 echo "🔁 Wiederherstellung:"
 echo "   Quelle: $SRC"
-echo "   Ziel:   $DEST"
+echo "   Ziel:   $PROFILE"
 
-# 2) Kopieren (wir überschreiben nur Einstellungen)
 rsync -a \
   --exclude 'ImapMail' \
   --exclude 'Mail' \
@@ -40,6 +40,6 @@ rsync -a \
   --exclude 'storage.sdb' \
   --exclude 'global-messages-db.sqlite' \
   --exclude 'times.json' \
-  "$SRC/" "$DEST/"
+  "$SRC/" "$PROFILE/"
 
-echo "✅ Restore fertig. Thunderbird beim nächsten Start nutzt deine Einstellungen."
+echo "✅ Restore fertig."

@@ -1,34 +1,34 @@
 #!/usr/bin/env bash
-# backup-thunderbird.sh — sichert relevante Thunderbird-Einstellungen ins XDG-Config,
-# ohne Mails/Cache. Für Dotfiles geeignet.
+# Backup Thunderbird (Flatpak oder native)
 
 set -e
 
+# Standardpfade
+BASE_NATIVE="${HOME}/.thunderbird"
+BASE_FLATPAK="${HOME}/.var/app/org.mozilla.Thunderbird/.thunderbird"
 DEST="${HOME}/.config/thunderbird-profile"
 
-# 1) Profil ermitteln (bevorzugt *.default-release, sonst erstes Profil)
-find_profile() {
-  local base="${HOME}/.thunderbird"
-  local p
+# Erkennen, ob Flatpak oder native
+if [ -d "$BASE_FLATPAK" ]; then
+  BASE="$BASE_FLATPAK"
+elif [ -d "$BASE_NATIVE" ]; then
+  BASE="$BASE_NATIVE"
+else
+  echo "❌ Kein Thunderbird-Profil gefunden. Bitte Thunderbird einmal starten."
+  exit 1
+fi
 
-  # bevorzugt default-release
-  p=$(find "$base" -maxdepth 1 -type d -name "*.default-release" | head -n1)
-  if [ -z "$p" ]; then
-    # sonst erstes zufälliges Profil (xxxxxxxx.default oder custom)
-    p=$(find "$base" -maxdepth 1 -type d -name "*.*" | grep -vE 'Crash Reports|Pending Pings' | head -n1)
-  fi
-  echo "$p"
-}
+# Profilordner ermitteln
+PROFILE=$(find "$BASE" -maxdepth 1 -type d -name "*.default-release" | head -n1)
+[ -n "$PROFILE" ] || PROFILE=$(find "$BASE" -maxdepth 1 -type d -name "*.*" | head -n1)
 
-SRC="$(find_profile)"
-[ -n "$SRC" ] || { echo "❌ Kein Thunderbird-Profil gefunden. Starte Thunderbird einmal, damit ein Profil angelegt wird."; exit 1; }
+[ -n "$PROFILE" ] || { echo "❌ Kein Profilordner gefunden."; exit 1; }
 
-echo "🔎 Profil: $SRC"
+echo "🔎 Profil: $PROFILE"
 echo "📦 Ziel:   $DEST"
 
 mkdir -p "$DEST"
 
-# 2) Einstellungen kopieren (ohne Mail/Cache/Telemetrie)
 rsync -a --delete \
   --exclude 'ImapMail' \
   --exclude 'Mail' \
@@ -42,9 +42,6 @@ rsync -a --delete \
   --exclude 'storage.sdb' \
   --exclude 'global-messages-db.sqlite' \
   --exclude 'times.json' \
-  "$SRC/" "$DEST/"
+  "$PROFILE/" "$DEST/"
 
-# 3) kleine Info
 echo "✅ Backup fertig."
-echo "   Gesichert wurden u.a.: prefs.js, user.js (falls vorhanden), chrome/, extensions/ etc."
-echo "   Nicht gesichert: ImapMail/, Mail/, cache2/, …"
