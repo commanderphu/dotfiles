@@ -1,31 +1,40 @@
 #!/usr/bin/env bash
-# Restore Thunderbird (Flatpak oder native)
+set -euo pipefail
 
-set -e
+BASE_NATIVE="$HOME/.thunderbird"
+BASE_FLAT="$HOME/.var/app/org.mozilla.Thunderbird/.thunderbird"
+SRC="$HOME/.config/thunderbird-profile"
 
-BASE_NATIVE="${HOME}/.thunderbird"
-BASE_FLATPAK="${HOME}/.var/app/org.mozilla.Thunderbird/.thunderbird"
-SRC="${HOME}/.config/thunderbird-profile"
+# Thunderbird beenden (native + flatpak)
+pkill -x thunderbird 2>/dev/null || true
+flatpak kill org.mozilla.Thunderbird 2>/dev/null || true
 
-if [ -d "$BASE_FLATPAK" ]; then
-  BASE="$BASE_FLATPAK"
-elif [ -d "$BASE_NATIVE" ]; then
-  BASE="$BASE_NATIVE"
-else
-  echo "❌ Kein Thunderbird-Profil gefunden. Bitte Thunderbird einmal starten."
-  exit 1
+[ -d "$SRC" ] || { echo "❌ Quelle $SRC fehlt (erst backup laufen lassen)."; exit 1; }
+
+if [ -d "$BASE_FLAT" ]; then BASE="$BASE_FLAT"
+elif [ -d "$BASE_NATIVE" ]; then BASE="$BASE_NATIVE"
+else echo "❌ Kein Profilordner. Starte TB einmal."; exit 1; fi
+
+# Default-Profil aus profiles.ini
+if [ -f "$BASE/profiles.ini" ]; then
+  rel=$(awk -F= '
+    /^\[Profile/ {d=0}
+    /^Default=1/ {d=1}
+    /^Path=/ && d==1 {print $2; exit}
+  ' "$BASE/profiles.ini")
+  if [ -n "$rel" ]; then
+    if grep -q '^IsRelative=1' "$BASE/profiles.ini"; then DEST="$BASE/$rel"; else DEST="$rel"; fi
+  fi
 fi
 
-[ -d "$SRC" ] || { echo "❌ Quelle $SRC existiert nicht."; exit 1; }
+# Fallbacks
+[ -z "${DEST:-}" ] && DEST=$(find "$BASE" -maxdepth 1 -type d -name "*.default-release" | head -n1)
+[ -z "${DEST:-}" ] && DEST=$(find "$BASE" -maxdepth 1 -type d -name "*.*" | grep -vE 'Crash Reports|Pending Pings' | head -n1)
+[ -n "${DEST:-}" ] || { echo "❌ Kein Profilordner gefunden."; exit 1; }
 
-PROFILE=$(find "$BASE" -maxdepth 1 -type d -name "*.default-release" | head -n1)
-[ -n "$PROFILE" ] || PROFILE=$(find "$BASE" -maxdepth 1 -type d -name "*.*" | head -n1)
-
-[ -n "$PROFILE" ] || { echo "❌ Kein Profilordner gefunden."; exit 1; }
-
-echo "🔁 Wiederherstellung:"
+echo "🔁 Restore:"
 echo "   Quelle: $SRC"
-echo "   Ziel:   $PROFILE"
+echo "   Ziel:   $DEST"
 
 rsync -a \
   --exclude 'ImapMail' \
@@ -40,6 +49,6 @@ rsync -a \
   --exclude 'storage.sdb' \
   --exclude 'global-messages-db.sqlite' \
   --exclude 'times.json' \
-  "$SRC/" "$PROFILE/"
+  "$SRC/" "$DEST/"
 
-echo "✅ Restore fertig."
+echo "✅ Restore ok. Starte Thunderbird neu."

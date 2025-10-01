@@ -1,32 +1,38 @@
 #!/usr/bin/env bash
-# Backup Thunderbird (Flatpak oder native)
+set -euo pipefail
 
-set -e
+BASE_NATIVE="$HOME/.thunderbird"
+BASE_FLAT="$HOME/.var/app/org.mozilla.Thunderbird/.thunderbird"
+DEST="$HOME/.config/thunderbird-profile"
 
-# Standardpfade
-BASE_NATIVE="${HOME}/.thunderbird"
-BASE_FLATPAK="${HOME}/.var/app/org.mozilla.Thunderbird/.thunderbird"
-DEST="${HOME}/.config/thunderbird-profile"
+# Thunderbird beenden (native + flatpak)
+pkill -x thunderbird 2>/dev/null || true
+flatpak kill org.mozilla.Thunderbird 2>/dev/null || true
 
-# Erkennen, ob Flatpak oder native
-if [ -d "$BASE_FLATPAK" ]; then
-  BASE="$BASE_FLATPAK"
-elif [ -d "$BASE_NATIVE" ]; then
-  BASE="$BASE_NATIVE"
-else
-  echo "❌ Kein Thunderbird-Profil gefunden. Bitte Thunderbird einmal starten."
-  exit 1
+# Profilbasis wählen
+if [ -d "$BASE_FLAT" ]; then BASE="$BASE_FLAT"
+elif [ -d "$BASE_NATIVE" ]; then BASE="$BASE_NATIVE"
+else echo "❌ Kein Profilordner. Starte TB einmal."; exit 1; fi
+
+# Default-Profil aus profiles.ini
+if [ -f "$BASE/profiles.ini" ]; then
+  rel=$(awk -F= '
+    /^\[Profile/ {d=0}
+    /^Default=1/ {d=1}
+    /^Path=/ && d==1 {print $2; exit}
+  ' "$BASE/profiles.ini")
+  if [ -n "$rel" ]; then
+    if grep -q '^IsRelative=1' "$BASE/profiles.ini"; then SRC="$BASE/$rel"; else SRC="$rel"; fi
+  fi
 fi
 
-# Profilordner ermitteln
-PROFILE=$(find "$BASE" -maxdepth 1 -type d -name "*.default-release" | head -n1)
-[ -n "$PROFILE" ] || PROFILE=$(find "$BASE" -maxdepth 1 -type d -name "*.*" | head -n1)
+# Fallbacks
+[ -z "${SRC:-}" ] && SRC=$(find "$BASE" -maxdepth 1 -type d -name "*.default-release" | head -n1)
+[ -z "${SRC:-}" ] && SRC=$(find "$BASE" -maxdepth 1 -type d -name "*.*" | grep -vE 'Crash Reports|Pending Pings' | head -n1)
+[ -n "${SRC:-}" ] || { echo "❌ Kein Profilordner gefunden."; exit 1; }
 
-[ -n "$PROFILE" ] || { echo "❌ Kein Profilordner gefunden."; exit 1; }
-
-echo "🔎 Profil: $PROFILE"
+echo "🔎 Quelle: $SRC"
 echo "📦 Ziel:   $DEST"
-
 mkdir -p "$DEST"
 
 rsync -a --delete \
@@ -42,6 +48,6 @@ rsync -a --delete \
   --exclude 'storage.sdb' \
   --exclude 'global-messages-db.sqlite' \
   --exclude 'times.json' \
-  "$PROFILE/" "$DEST/"
+  "$SRC/" "$DEST/"
 
-echo "✅ Backup fertig."
+echo "✅ Backup ok → $DEST"
