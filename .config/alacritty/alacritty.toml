@@ -1,0 +1,67 @@
+# ---------- General ----------
+[general]
+# Neu: import gehört unter [general]
+import = [
+  # Genau einen Flavor aktiv lassen:
+  "~/.config/alacritty/catppuccin-frappe.toml"
+  # "~/.config/alacritty/catppuccin-latte.toml"
+  # "~/.config/alacritty/catppuccin-macchiato.toml"
+  # "~/.config/alacritty/catppuccin-mocha.toml"
+]
+live_config_reload = true
+working_directory = "/home/einfachnurphu/Dokumente/PhuDev"
+
+# ---------- Window ----------
+[window]
+opacity = 0.9
+dimensions = { columns = 120, lines = 30 }
+startup_mode = "Windowed" # "Maximized" | "Fullscreen"
+padding = { x = 10, y = 10 }
+decorations = "full"
+
+# ---------- Font ----------
+[font]
+size = 12.0
+
+[font.normal]
+family = "FiraCode Nerd Font"
+style = "Regular"
+
+[font.bold]
+family = "FiraCode Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "FiraCode Nerd Font"
+style = "Italic"
+
+# ---------- Scrolling ----------
+[scrolling]
+history = 10000
+multiplier = 3
+
+# ---------- Cursor ----------
+[cursor]
+style = { shape = "Beam", blinking = "On" }
+
+# ---------- Selection ----------
+[selection]
+save_to_clipboard = true
+
+# ---------- Terminal / Shell ----------
+[terminal]
+# Neu: shell steht unter [terminal] und erwartet String ODER Table
+shell = { program = "/usr/bin/zsh", args = [] }
+
+
+# ---------- Keybindings ----------
+[keyboard]
+bindings = [
+  { key = "C", mods = "Control|Shift", action = "Copy"  },
+  { key = "V", mods = "Control|Shift", action = "Paste" }
+]
+
+# ---------- Bell ----------
+[bell]
+animation = "EaseOutExpo"
+duration = 0
