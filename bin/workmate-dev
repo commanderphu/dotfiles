@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -e
+
+SESSION="Workmate-Tool"
+PROJECT_DIR="$HOME/Dokumente/PhuDev/workmate"
+
+echo "🐳 Starte Docker-Stack..."
+cd "$PROJECT_DIR"
+make up
+
+echo "🧠 Öffne VS Code..."
+code workmate.code-workspace &
+
+# ────────────────────────────────
+# 🧩 Starte tmuxp-Session
+# ────────────────────────────────
+if tmux has-session -t "$SESSION" 2>/dev/null; then
+  echo "📺 Session '$SESSION' existiert bereits. Öffne..."
+  tmux attach -t "$SESSION"
+else
+  echo "🌿 Lade tmuxp-Konfiguration..."
+  tmuxp load workmate
+fi

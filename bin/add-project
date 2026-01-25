@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Quick project adder - fügt ein Projekt zu beiden Registries hinzu
+
+ZSH_PROJECT_MAP="$HOME/.zsh/projects.zsh"
+CONFIG_LIST="$HOME/.config/projects"
+
+if [[ $# -lt 2 ]]; then
+  echo "Usage: add-project <key> <path>"
+  echo "Beispiel: add-project myapp ~/Dokumente/PhuDev/myapp"
+  exit 1
+fi
+
+KEY="$1"
+PATH_ARG="$2"
+
+# Expandiere ~ zu $HOME
+PATH_EXPANDED="${PATH_ARG/#\~/$HOME}"
+
+# Prüfe ob Pfad existiert
+if [[ ! -d "$PATH_EXPANDED" ]]; then
+  echo "❌ Fehler: Pfad existiert nicht: $PATH_EXPANDED"
+  exit 1
+fi
+
+# 1. Update ~/.zsh/projects.zsh
+if [[ -f "$ZSH_PROJECT_MAP" ]]; then
+  sed -i.bak "/PROJ\[${KEY}\]=/d" "$ZSH_PROJECT_MAP" 2>/dev/null || true
+fi
+mkdir -p "$(dirname "$ZSH_PROJECT_MAP")"
+echo "PROJ[${KEY}]=\"${PATH_EXPANDED}\"" >> "$ZSH_PROJECT_MAP"
+
+# 2. Update ~/.config/projects
+mkdir -p "$(dirname "$CONFIG_LIST")"
+touch "$CONFIG_LIST"
+# Entferne altes Entry
+tmp="$(mktemp)"
+grep -v "^${KEY}|" "$CONFIG_LIST" 2>/dev/null >"$tmp" || true
+echo "${KEY}|${PATH_EXPANDED}" >>"$tmp"
+mv "$tmp" "$CONFIG_LIST"
+
+echo "✅ Projekt '$KEY' hinzugefügt: $PATH_EXPANDED"
+echo "💡 Nutze: p $KEY  oder  proj (FZF picker)"

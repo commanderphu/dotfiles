@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Sync-Tool: Synchronisiert PROJ Array ↔ ~/.config/projects
+
+ZSH_MAP="$HOME/.zsh/projects.zsh"
+CONFIG_LIST="$HOME/.config/projects"
+
+echo "🔄 Synchronisiere Projekt-Dateien..."
+
+# Prüfe ob Dateien existieren
+if [[ ! -f "$ZSH_MAP" ]]; then
+  echo "❌ $ZSH_MAP existiert nicht!"
+  exit 1
+fi
+
+# Erstelle ~/.config/projects neu aus PROJ Array
+mkdir -p "$(dirname "$CONFIG_LIST")"
+echo "# Projekt-Liste (automatisch generiert)" > "$CONFIG_LIST"
+echo "# Format: key|path" >> "$CONFIG_LIST"
+echo "" >> "$CONFIG_LIST"
+
+# Parse PROJ Array aus projects.zsh
+echo "# K.I.T Business Projects" >> "$CONFIG_LIST"
+grep "PROJ\[.*\]=" "$ZSH_MAP" | grep "K.I.T" | while read -r line; do
+  key=$(echo "$line" | sed -E 's/PROJ\[([^]]+)\]=.*/\1/')
+  path=$(echo "$line" | sed -E 's/PROJ\[[^]]+\]="(.*)"/\1/')
+  # Expandiere $HOME
+  path="${path//\$HOME/$HOME}"
+  echo "$key|$path" >> "$CONFIG_LIST"
+done
+
+echo "" >> "$CONFIG_LIST"
+echo "# PhuDev Personal" >> "$CONFIG_LIST"
+grep "PROJ\[.*\]=" "$ZSH_MAP" | grep "PhuDev" | while read -r line; do
+  key=$(echo "$line" | sed -E 's/PROJ\[([^]]+)\]=.*/\1/')
+  path=$(echo "$line" | sed -E 's/PROJ\[[^]]+\]="(.*)"/\1/')
+  path="${path//\$HOME/$HOME}"
+  echo "$key|$path" >> "$CONFIG_LIST"
+done
+
+echo "" >> "$CONFIG_LIST"
+echo "# Streaming" >> "$CONFIG_LIST"
+grep "PROJ\[.*\]=" "$ZSH_MAP" | grep "Streaming" | while read -r line; do
+  key=$(echo "$line" | sed -E 's/PROJ\[([^]]+)\]=.*/\1/')
+  path=$(echo "$line" | sed -E 's/PROJ\[[^]]+\]="(.*)"/\1/')
+  path="${path//\$HOME/$HOME}"
+  echo "$key|$path" >> "$CONFIG_LIST"
+done
+
+echo "" >> "$CONFIG_LIST"
+echo "# Services & Infrastructure" >> "$CONFIG_LIST"
+grep "PROJ\[.*\]=" "$ZSH_MAP" | grep -E "(srv|infra)" | while read -r line; do
+  key=$(echo "$line" | sed -E 's/PROJ\[([^]]+)\]=.*/\1/')
+  path=$(echo "$line" | sed -E 's/PROJ\[[^]]+\]="(.*)"/\1/')
+  path="${path//\$HOME/$HOME}"
+  echo "$key|$path" >> "$CONFIG_LIST"
+done
+
+echo "✅ Synchronisation abgeschlossen"
+echo "📄 $CONFIG_LIST wurde aktualisiert"
