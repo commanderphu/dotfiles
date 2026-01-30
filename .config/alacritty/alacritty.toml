@@ -1,25 +1,23 @@
-# ---------- General ----------
+# ───────────────────────────────────────────────────────────────
+# ⚡ Alacritty Config - Flash Theme
+# ───────────────────────────────────────────────────────────────
+
 [general]
-# Neu: import gehört unter [general]
-import = [
-  # Genau einen Flavor aktiv lassen:
-  "~/.config/alacritty/catppuccin-frappe.toml"
-  # "~/.config/alacritty/catppuccin-latte.toml"
-  # "~/.config/alacritty/catppuccin-macchiato.toml"
-  # "~/.config/alacritty/catppuccin-mocha.toml"
-]
 live_config_reload = true
-working_directory = "/home/einfachnurphu/Dokumente/PhuDev"
 
-# ---------- Window ----------
+# ─────────────────────────────────────────────────────────────
+# Window
+# ─────────────────────────────────────────────────────────────
 [window]
-opacity = 0.9
+padding = { x = 12, y = 12 }
+opacity = 0.95
 dimensions = { columns = 120, lines = 30 }
-startup_mode = "Windowed" # "Maximized" | "Fullscreen"
-padding = { x = 10, y = 10 }
-decorations = "full"
+startup_mode = "Windowed"
+decorations = "Full"
 
-# ---------- Font ----------
+# ─────────────────────────────────────────────────────────────
+# Font - FiraCode Nerd Font
+# ─────────────────────────────────────────────────────────────
 [font]
 size = 12.0
 
@@ -35,33 +33,82 @@ style = "Bold"
 family = "FiraCode Nerd Font"
 style = "Italic"
 
-# ---------- Scrolling ----------
+# ─────────────────────────────────────────────────────────────
+# Scrolling
+# ─────────────────────────────────────────────────────────────
 [scrolling]
 history = 10000
 multiplier = 3
 
-# ---------- Cursor ----------
-[cursor]
-style = { shape = "Beam", blinking = "On" }
+# ─────────────────────────────────────────────────────────────
+# Flash Color Scheme - Dunkelrot mit Gold
+# ─────────────────────────────────────────────────────────────
+[colors.primary]
+background = "#1a0a0a"
+foreground = "#f0c674"
 
-# ---------- Selection ----------
+[colors.cursor]
+cursor = "#f0b800"
+text = "#1a0a0a"
+
+[colors.selection]
+background = "#5c1a1a"
+text = "#f0c674"
+
+# Normal colors
+[colors.normal]
+black   = "#1a0a0a"
+red     = "#cc2929"
+green   = "#f0b800"
+yellow  = "#e5a800"
+blue    = "#8b3a3a"
+magenta = "#a04040"
+cyan    = "#d4a000"
+white   = "#f0c674"
+
+# Bright colors
+[colors.bright]
+black   = "#4a1a1a"
+red     = "#ff4444"
+green   = "#ffd700"
+yellow  = "#ffcc00"
+blue    = "#b85454"
+magenta = "#cc5555"
+cyan    = "#ffb800"
+white   = "#fffacd"
+
+# ─────────────────────────────────────────────────────────────
+# Cursor
+# ─────────────────────────────────────────────────────────────
+[cursor]
+style = { shape = "Block", blinking = "On" }
+blink_interval = 750
+
+# ─────────────────────────────────────────────────────────────
+# Selection
+# ─────────────────────────────────────────────────────────────
 [selection]
 save_to_clipboard = true
 
-# ---------- Terminal / Shell ----------
+# ─────────────────────────────────────────────────────────────
+# Terminal / Shell
+# ─────────────────────────────────────────────────────────────
 [terminal]
-# Neu: shell steht unter [terminal] und erwartet String ODER Table
 shell = { program = "/usr/bin/zsh", args = [] }
 
-
-# ---------- Keybindings ----------
+# ─────────────────────────────────────────────────────────────
+# Keybindings
+# ─────────────────────────────────────────────────────────────
 [keyboard]
 bindings = [
   { key = "C", mods = "Control|Shift", action = "Copy"  },
-  { key = "V", mods = "Control|Shift", action = "Paste" }
+  { key = "V", mods = "Control|Shift", action = "Paste" },
+  { key = "N", mods = "Control|Shift", action = "SpawnNewInstance" }
 ]
 
-# ---------- Bell ----------
+# ─────────────────────────────────────────────────────────────
+# Bell
+# ─────────────────────────────────────────────────────────────
 [bell]
 animation = "EaseOutExpo"
 duration = 0

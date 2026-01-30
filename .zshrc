@@ -1,13 +1,14 @@
+# ───────────────────────────────────────────────────────────────
+# ⚡ ZSH Config - Flash Theme
+# ───────────────────────────────────────────────────────────────
 
-# ───────────────────────────────────────────────────────────────
-# 🟣 Powerlevel10k Instant Prompt (MUSS GANZ OBEN STEHEN)
-# ───────────────────────────────────────────────────────────────
+# Powerlevel10k Instant Prompt (MUSS GANZ OBEN STEHEN)
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 # ───────────────────────────────────────────────────────────────
-# 🟦 Environment Setup
+# ⚡ Environment Setup
 # ───────────────────────────────────────────────────────────────
 
 export ZSH="$HOME/.oh-my-zsh"
@@ -15,11 +16,11 @@ export EDITOR="nvim"
 export FILE_MANAGER="yazi"
 
 # ───────────────────────────────────────────────────────────────
-# 🟨 PATH Configuration
+# ⚡ PATH Configuration
 # ───────────────────────────────────────────────────────────────
 
 # Local binaries
-export PATH="$HOME/bin:$PATH"
+export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 
 # Development Tools
 export PATH="$HOME/.pub-cache/bin:$PATH"
@@ -54,23 +55,26 @@ else
 fi
 
 # ───────────────────────────────────────────────────────────────
-# 🟣 Powerlevel10k Theme (VOR OH-MY-ZSH)
+# ⚡ Powerlevel10k Theme
 # ───────────────────────────────────────────────────────────────
 
 if [[ -d "$HOME/.powerlevel10k" ]]; then
-  [[ -s "$HOME/.powerlevel10k/powerlevel10k.zsh-theme" ]] && \
-    source "$HOME/.powerlevel10k/powerlevel10k.zsh-theme"
+  source "$HOME/.powerlevel10k/powerlevel10k.zsh-theme"
+elif [[ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k" ]]; then
+  source "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k/powerlevel10k.zsh-theme"
 fi
 
+# Flash P10k Config laden
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
-# Fallback-Prompt falls P10k nicht lädt
-if [[ -z "$POWERLEVEL10K_LEFT_PROMPT_ELEMENTS" ]]; then
-  PROMPT='%F{cyan}%n@%m%f %F{yellow}%1~%f %# '
+# Fallback-Prompt falls P10k nicht geladen
+if ! (( ${+functions[prompt_powerlevel10k_setup]} )); then
+  # Flash-Farben Fallback Prompt
+  PROMPT='%F{#cc2929}⚡%f %F{#f0b800}%n%f %F{#f0c674}%1~%f %F{#cc2929}>%f '
 fi
 
 # ───────────────────────────────────────────────────────────────
-# 🟧 Oh My Zsh
+# ⚡ Oh My Zsh
 # ───────────────────────────────────────────────────────────────
 
 plugins=(
@@ -83,10 +87,17 @@ plugins=(
 [[ -s "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
 
 # ───────────────────────────────────────────────────────────────
-# 🟩 Shell Tools
+# ⚡ Shell Tools
 # ───────────────────────────────────────────────────────────────
 
-# FZF
+# FZF mit Flash-Farben
+export FZF_DEFAULT_OPTS="
+  --color=bg+:#5c1a1a,bg:#1a0a0a,spinner:#f0b800,hl:#cc2929
+  --color=fg:#f0c674,header:#cc2929,info:#f0b800,pointer:#f0b800
+  --color=marker:#f0b800,fg+:#fffacd,prompt:#cc2929,hl+:#ff4444
+  --border=rounded --prompt='⚡ '
+"
+
 [[ -f /usr/share/fzf/shell/key-bindings.zsh ]] && source /usr/share/fzf/shell/key-bindings.zsh
 [[ -f /usr/share/fzf/shell/completion.zsh ]]   && source /usr/share/fzf/shell/completion.zsh
 [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
@@ -95,7 +106,7 @@ plugins=(
 command -v thefuck >/dev/null 2>&1 && eval "$(thefuck --alias)"
 
 # ───────────────────────────────────────────────────────────────
-# 🟥 Aliases - Sauber strukturiert
+# ⚡ Aliases
 # ───────────────────────────────────────────────────────────────
 
 # Modern CLI Tools
@@ -108,7 +119,6 @@ alias cat='bat'
 alias dotgit='git --git-dir=$HOME/.dotfiles-repo.git --work-tree=$HOME'
 
 # Claude
-alias claude="/home/einfachnurphu/.claude/local/claude"
 
 # Quick Navigation (mit zoxide fallback zu cd)
 if command -v zoxide >/dev/null 2>&1; then
@@ -125,15 +135,14 @@ fi
 [[ -f ~/.config/zsh/caddy_aliases.sh ]] && source ~/.config/zsh/caddy_aliases.sh
 
 # ───────────────────────────────────────────────────────────────
-# 🟨 Projekt-Registry & Navigation
+# ⚡ Projekt-Registry & Navigation
 # ───────────────────────────────────────────────────────────────
 
-# Projekt-Liste für FZF-Picker
 PROJECT_LIST=${PROJECT_LIST:-$HOME/.config/projects}
 
-# FZF Projekt-Picker (interaktive Auswahl)
+# FZF Projekt-Picker
 proj() {
-  local fzf_cmd="fzf --prompt='Projects > ' --height 40% --reverse"
+  local fzf_cmd="fzf --prompt='⚡ Projects > ' --height 40% --reverse"
   local dest
   if [[ -f "$PROJECT_LIST" ]]; then
     dest=$(cut -d"|" -f2 "$PROJECT_LIST" | eval $fzf_cmd)
@@ -143,7 +152,7 @@ proj() {
   [[ -n "$dest" ]] && cd "$dest"
 }
 
-# Lade Projekt-Registry (PROJ Array)
+# Lade Projekt-Registry
 [[ -f ~/.zsh/projects.zsh ]] && source ~/.zsh/projects.zsh
 typeset -g -A PROJ
 
@@ -152,21 +161,15 @@ pj() { cd "${PROJ[$1]:-$HOME}"; }
 _pj_complete() { compadd ${(k)PROJ}; }
 compdef _pj_complete pj
 
-# Optional: Tmux-Integration (erstellt automatisch Sessions)
-# Uncomment um p() Command mit tmux-Sessions zu aktivieren:
-# [[ -f ~/.zsh/tmux-integration.zsh ]] && source ~/.zsh/tmux-integration.zsh
-
 # ───────────────────────────────────────────────────────────────
-# 🟩 Yazi - Terminal File Manager
+# ⚡ Yazi - Terminal File Manager
 # ───────────────────────────────────────────────────────────────
 
 alias y="yazi"
 
-# Yazi öffnen → danach im gewählten Ordner landen
 yy() {
   local cwd_file="/tmp/yazi-cwd-$$"
   yazi --cwd-file "$cwd_file"
-
   if [[ -f "$cwd_file" ]]; then
     local dst="$(cat "$cwd_file")"
     rm -f "$cwd_file"
@@ -174,11 +177,9 @@ yy() {
   fi
 }
 
-# cd → Yazi (magischer Ordnerwechsel)
 cdy() {
   local cwd_file="/tmp/yazi-cwd-$$"
   yazi --cwd-file "$cwd_file"
-
   if [[ -f "$cwd_file" ]]; then
     local dst="$(cat "$cwd_file")"
     rm -f "$cwd_file"
@@ -189,7 +190,7 @@ cdy() {
 alias yc="cdy"
 
 # ───────────────────────────────────────────────────────────────
-# 🟪 Tresor - Verschlüsseltes Archiv
+# ⚡ Tresor - Verschluesseltes Archiv
 # ───────────────────────────────────────────────────────────────
 
 alias tresor_cd='cd /mnt/data/docs/Dokumente/Privat'
@@ -197,18 +198,12 @@ alias tresor_open='gpg -d visions_of_life.tar.gz.gpg > visions_of_life.tar.gz &&
 alias tresor_close='tar -czf visions_of_life.tar.gz visions_of_life && gpg -c visions_of_life.tar.gz && shred -u visions_of_life.tar.gz && rm -rf visions_of_life'
 
 # ───────────────────────────────────────────────────────────────
-# 🟪 Zoxide (MUSS GANZ UNTEN STEHEN)
+# ⚡ Zoxide (MUSS GANZ UNTEN STEHEN)
 # ───────────────────────────────────────────────────────────────
 
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init zsh)"
-else
-  # Fallback: wenn zoxide nicht verfügbar ist, deaktiviere Hook falls vorhanden
-  if typeset -f __zoxide_hook >/dev/null 2>&1; then
-    unfunction __zoxide_hook 2>/dev/null || true
-  fi
-  # Entferne aus chpwd_functions falls gesetzt
-  if [[ -n "${chpwd_functions[(r)__zoxide_hook]}" ]]; then
-    chpwd_functions=("${(@)chpwd_functions:#__zoxide_hook}")
-  fi
 fi
+export PATH="$HOME/.local/bin/$PATH"
+export PATH="$HOME/go/bin:$PATH"
+export PATH="$HOME/.spicetify:$PATH"
