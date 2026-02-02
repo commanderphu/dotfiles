@@ -1,0 +1,26 @@
+# Development Tools & Languages
+
+# Version Control
+github-cli
+
+# Python
+python
+python-pip
+python-virtualenv
+
+# Node.js & JavaScript
+nodejs
+npm
+pnpm
+
+# Databases
+postgresql
+postgresql-libs
+
+# Docker
+docker
+docker-compose
+
+# Network Tools
+openssh
+rsync

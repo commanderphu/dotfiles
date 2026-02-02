@@ -1,0 +1,17 @@
+# Manuelle Binaries
+# Diese Tools sind nicht via pacman/yay verfügbar oder werden als AppImage bevorzugt
+
+# Bitwarden CLI (alternativ: yay -S bitwarden-cli)
+# https://vault.bitwarden.com/download/?app=cli&platform=linux
+# wget -O ~/bin/bw https://vault.bitwarden.com/download/?app=cli&platform=linux && chmod +x ~/bin/bw
+
+# DrawIO Desktop (alternativ: yay -S drawio-desktop)
+# https://github.com/jgraph/drawio-desktop/releases
+# Neueste Version checken und downloaden
+
+# TouchPortal (Stream Deck Alternative)
+# https://www.touch-portal.com/downloads
+# Nur als AppImage verfügbar
+
+# WICHTIG: Große Binaries werden NICHT im dotfiles repo getrackt!
+# Installiere sie manuell oder via Package Manager nach dem Bootstrap.

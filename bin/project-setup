@@ -1,0 +1,235 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ===== Defaults =====
+PROJECTS_DIR="${PROJECTS_DIR:-$HOME/Dokumente/PhuDev}"
+PROJECT_LIST="${PROJECT_LIST:-$HOME/.config/projects}"
+ZSH_PROJECT_MAP="$HOME/.zsh/projects.zsh"
+ZSHRC="$HOME/.zshrc"
+
+# ===== Helpers =====
+ask() {
+  local prompt="$1" default="${2:-}"
+  if [[ -n "$default" ]]; then
+    read -rp "$prompt [$default]: " REPLY
+    echo "${REPLY:-$default}"
+  else
+    read -rp "$prompt: " REPLY
+    echo "$REPLY"
+  fi
+}
+
+ensure_line_in_file() {
+  local line="$1" file="$2"
+  mkdir -p "$(dirname "$file")"
+  touch "$file"
+  grep -Fqx "$line" "$file" || echo "$line" >>"$file"
+}
+
+remove_proj_key_from_map() {
+  local key="$1" file="$2"
+  [[ -f "$file" ]] || return 0
+  sed -i.bak "/PROJ\[${key}\]=/d" "$file" || true
+}
+
+append_proj_key_to_map() {
+  local key="$1" path="$2" file="$3"
+  mkdir -p "$(dirname "$file")"
+  touch "$file"
+  ensure_line_in_file "typeset -g -A PROJ" "$file"
+  echo "PROJ[${key}]=\"${path}\"" >>"$file"
+}
+
+slugify() {
+  tr '[:upper:]' '[:lower:]' <<<"$1" | sed -E 's/[^a-z0-9._-]+/-/g;s/^-+//;s/-+$//'
+}
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+# ===== Dialog =====
+echo "=== New Project Setup ==="
+name_raw="$(ask 'Projektname (kurzes Label, z.B. workmate)')"
+[[ -z "$name_raw" ]] && { echo "Abbruch: kein Name."; exit 1; }
+name="$(slugify "$name_raw")"
+
+desc="$(ask 'Beschreibung (optional)')"
+base="$(ask 'Projektbasisordner' "$PROJECTS_DIR")"
+
+cat <<'MENU'
+Template wählen:
+  1) Empty (README + .gitignore)
+  2) React + Vite (npm)
+  3) Vue + Vite (npm)
+  4) FastAPI (Python venv, uvicorn)
+MENU
+tmpl="$(ask 'Auswahl 1/2/3/4' '1')"
+
+path="${base}/${name}"
+mkdir -p "$path"
+cd "$path"
+
+# ===== .gitignore Snippets =====
+gi_node='node_modules
+dist
+build
+.cache
+.env
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.DS_Store'
+gi_py='__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+build/
+dist/
+.eggs/
+*.egg-info/
+.pytest_cache/
+.coverage*
+htmlcov/
+.DS_Store
+.env'
+
+# ===== Scaffold je Template =====
+case "$tmpl" in
+  2) # React + Vite
+    echo "→ Scaffold: React + Vite"
+    have npm || { echo "Fehlt: npm"; exit 1; }
+    npm create vite@latest . -- --template react || npm create vite@latest . -- --template react
+    npm install
+    printf '%s\n' "$gi_node" > .gitignore
+    ;;
+
+  3) # Vue + Vite
+    echo "→ Scaffold: Vue + Vite"
+    have npm || { echo "Fehlt: npm"; exit 1; }
+    npm create vite@latest . -- --template vue || npm create vite@latest . -- --template vue
+    npm install
+    printf '%s\n' "$gi_node" > .gitignore
+    ;;
+
+  4) # FastAPI
+    echo "→ Scaffold: FastAPI"
+    have python3 || { echo "Fehlt: python3"; exit 1; }
+    python3 -m venv .venv
+    # shellcheck disable=SC1091
+    source .venv/bin/activate
+    pip install --upgrade pip
+    pip install fastapi "uvicorn[standard]"
+    mkdir -p app
+    cat > app/main.py <<'PY'
+from fastapi import FastAPI
+
+app = FastAPI(title="FastAPI Starter")
+
+@app.get("/")
+def read_root():
+    return {"ok": True, "msg": "Hello from FastAPI"}
+PY
+
+    cat > requirements.txt <<'REQ'
+fastapi
+uvicorn[standard]
+REQ
+
+    cat > .env.example <<'ENV'
+# Example environment variables
+# PORT=8000
+ENV
+
+    cat > Makefile <<'MK'
+run:
+	. .venv/bin/activate && uvicorn app.main:app --reload --port $${PORT:-8000}
+fmt:
+	. .venv/bin/activate && python -m pip install ruff black && ruff check --fix . && black .
+MK
+    printf '%s\n' "$gi_py" > .gitignore
+    ;;
+
+  1|*) # Empty
+    echo "→ Scaffold: Empty"
+    echo ".DS_Store" > .gitignore
+    ;;
+esac
+
+# ===== README =====
+cat > README.md <<EOF
+# ${name}
+
+${desc}
+
+## Quickstart
+
+$(case "$tmpl" in
+  2) cat <<'R';;
+- dev: `npm run dev`
+- build: `npm run build`
+- preview: `npm run preview`
+R
+  3) cat <<'V';;
+- dev: `npm run dev`
+- build: `npm run build`
+- preview: `npm run preview`
+V
+  4) cat <<'F';;
+- (optional) `.env` aus `.env.example` kopieren
+- venv aktivieren: `source .venv/bin/activate`
+- starten: `make run` (oder `uvicorn app.main:app --reload --port 8000`)
+F
+  *) cat <<'E';;
+- füge Code/Ordner nach Bedarf hinzu
+E
+esac)
+
+## Navigation
+- `pj ${name}`  → direkt ins Projekt springen
+- `proj`        → FZF Projekt-Picker
+- `j ${name}`   → via zoxide, nachdem du das Verzeichnis genutzt hast
+
+EOF
+
+# ===== Git init =====
+if [[ ! -d .git ]]; then
+  git init -b main || git init
+  git add .
+  git commit -m "chore: initial ${name} scaffold" || true
+fi
+
+# ===== ~/.config/projects pflegen =====
+mkdir -p "$(dirname "$PROJECT_LIST")"
+tmp="$(mktemp)"
+grep -v "^${name}|" "$PROJECT_LIST" 2>/dev/null >"$tmp" || true
+echo "${name}|${path}" >>"$tmp"
+mv "$tmp" "$PROJECT_LIST"
+
+# ===== ~/.zsh/projects.zsh pflegen =====
+remove_proj_key_from_map "$name" "$ZSH_PROJECT_MAP"
+append_proj_key_to_map "$name" "$path" "$ZSH_PROJECT_MAP"
+ensure_line_in_file '[[ -f ~/.zsh/projects.zsh ]] && source ~/.zsh/projects.zsh' "$ZSHRC"
+
+# ===== Finale Info =====
+cat <<INFO
+
+✅ Projekt angelegt: ${path}
+
+➡ Navigation:
+  - pj ${name}
+  - proj
+  - j ${name}  (falls zoxide aktiv)
+
+📦 Template: $(case "$tmpl" in 1) echo "Empty";; 2) echo "React + Vite";; 3) echo "Vue + Vite";; 4) echo "FastAPI";; esac)
+
+📄 Wichtige Dateien:
+  - README.md
+  - .gitignore
+  - $(basename "$PROJECT_LIST")  (Label|Pfad-Liste)
+  - ~/.zsh/projects.zsh  (pj-Shortcuts)
+
+💡 Shell neu laden:
+  source "$ZSH_PROJECT_MAP"   # oder: exec zsh
+
+INFO

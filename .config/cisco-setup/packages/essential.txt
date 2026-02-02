@@ -1,0 +1,34 @@
+# Essential System Packages
+# Diese Packages sind absolut notwendig für Basis-Funktionalität
+
+# Core Tools
+base-devel
+git
+curl
+wget
+unzip
+zip
+
+# Shell
+zsh
+zsh-syntax-highlighting
+zsh-autosuggestions
+
+# Terminal & Multiplexing
+tmux
+kitty
+
+# Modern CLI Tools
+lsd          # ls replacement
+bat          # cat replacement
+ripgrep      # grep replacement
+fd           # find replacement
+fzf          # fuzzy finder
+zoxide       # smart cd
+
+# Editor
+neovim
+
+# System Info
+htop
+btop

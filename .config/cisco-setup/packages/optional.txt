@@ -1,0 +1,16 @@
+# Optional Packages
+
+# File Management
+yazi           # Terminal file manager
+ranger
+
+# Productivity
+thefuck        # Command correction
+
+# Monitoring
+duf            # Disk usage
+dust           # du replacement
+
+# Network
+nmap
+traceroute

@@ -1,0 +1,264 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ===================================================================
+# 🚀 Cisco Dev-Host Bootstrap
+# ===================================================================
+# Reproduzierbares Setup für frische Arch Linux Installation
+#
+# Usage:
+#   ./bootstrap.sh              # Interaktiver Modus
+#   ./bootstrap.sh --auto       # Automatisch (alle Defaults)
+#   ./bootstrap.sh --minimal    # Nur Essential Packages
+# ===================================================================
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PACKAGES_DIR="$HOME/.config/cisco-setup/packages"
+BIN_DIR="$HOME/bin"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Flags
+AUTO_MODE=false
+MINIMAL_MODE=false
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --auto) AUTO_MODE=true; shift ;;
+    --minimal) MINIMAL_MODE=true; shift ;;
+    *) echo "Unknown option: $1"; exit 1 ;;
+  esac
+done
+
+# ===================================================================
+# Helper Functions
+# ===================================================================
+
+log_info() {
+  echo -e "${BLUE}ℹ${NC} $1"
+}
+
+log_success() {
+  echo -e "${GREEN}✓${NC} $1"
+}
+
+log_warn() {
+  echo -e "${YELLOW}⚠${NC} $1"
+}
+
+log_error() {
+  echo -e "${RED}✗${NC} $1"
+}
+
+ask_yes_no() {
+  if [[ "$AUTO_MODE" == true ]]; then
+    return 0
+  fi
+
+  local prompt="$1"
+  local default="${2:-n}"
+
+  if [[ "$default" == "y" ]]; then
+    read -rp "$prompt [Y/n]: " response
+    response="${response:-y}"
+  else
+    read -rp "$prompt [y/N]: " response
+    response="${response:-n}"
+  fi
+
+  [[ "$response" =~ ^[Yy] ]]
+}
+
+check_arch() {
+  if ! grep -q "Arch Linux" /etc/os-release 2>/dev/null; then
+    log_error "Dieses Script ist für Arch Linux optimiert."
+    log_warn "Fortfahren auf eigene Gefahr!"
+    ask_yes_no "Trotzdem fortfahren?" || exit 1
+  fi
+}
+
+# ===================================================================
+# Installation Steps
+# ===================================================================
+
+step_1_system_update() {
+  log_info "Schritt 1/6: System Update"
+
+  if ask_yes_no "System aktualisieren?" "y"; then
+    sudo pacman -Syu --noconfirm
+    log_success "System aktualisiert"
+  fi
+}
+
+step_2_install_packages() {
+  log_info "Schritt 2/6: Packages installieren"
+
+  # Essential packages (immer)
+  if [[ -f "$PACKAGES_DIR/essential.txt" ]]; then
+    log_info "Installiere Essential Packages..."
+    grep -v '^#' "$PACKAGES_DIR/essential.txt" | grep -v '^$' | xargs sudo pacman -S --needed --noconfirm
+    log_success "Essential Packages installiert"
+  fi
+
+  # Development packages (optional)
+  if [[ "$MINIMAL_MODE" == false ]] && ask_yes_no "Development Packages installieren?" "y"; then
+    if [[ -f "$PACKAGES_DIR/development.txt" ]]; then
+      log_info "Installiere Development Packages..."
+      grep -v '^#' "$PACKAGES_DIR/development.txt" | grep -v '^$' | xargs sudo pacman -S --needed --noconfirm
+      log_success "Development Packages installiert"
+    fi
+  fi
+
+  # Optional packages
+  if [[ "$MINIMAL_MODE" == false ]] && ask_yes_no "Optional Packages installieren?" "n"; then
+    if [[ -f "$PACKAGES_DIR/optional.txt" ]]; then
+      log_info "Installiere Optional Packages..."
+      grep -v '^#' "$PACKAGES_DIR/optional.txt" | grep -v '^$' | xargs sudo pacman -S --needed --noconfirm
+      log_success "Optional Packages installiert"
+    fi
+  fi
+}
+
+step_3_oh_my_zsh() {
+  log_info "Schritt 3/6: Oh My Zsh Setup"
+
+  if [[ -d "$HOME/.oh-my-zsh" ]]; then
+    log_warn "Oh My Zsh bereits installiert, überspringe..."
+  elif ask_yes_no "Oh My Zsh installieren?" "y"; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+    # Powerlevel10k
+    if ask_yes_no "Powerlevel10k Theme installieren?" "y"; then
+      git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.powerlevel10k
+      log_success "Powerlevel10k installiert"
+    fi
+
+    log_success "Oh My Zsh installiert"
+  fi
+}
+
+step_4_dotfiles() {
+  log_info "Schritt 4/6: Dotfiles deployen (bare repo)"
+
+  if ask_yes_no "Dotfiles bare repo klonen?" "y"; then
+    local dotfiles_repo="git@github.com:commanderphu/dotfiles.git"
+
+    # Check if already exists
+    if [[ -d "$HOME/.dotfiles-repo.git" ]]; then
+      log_warn "Dotfiles repo bereits vorhanden"
+
+      if ask_yes_no "Dotfiles pullen?" "y"; then
+        git --git-dir="$HOME/.dotfiles-repo.git" --work-tree="$HOME" pull
+        log_success "Dotfiles aktualisiert"
+      fi
+    else
+      # Backup existing critical files
+      mkdir -p "$HOME/.dotfiles-backup"
+      for file in .zshrc .tmux.conf .gitconfig; do
+        if [[ -f "$HOME/$file" ]]; then
+          cp "$HOME/$file" "$HOME/.dotfiles-backup/$file.backup-$(date +%Y%m%d-%H%M%S)"
+          log_info "Backup erstellt: $file"
+        fi
+      done
+
+      # Clone bare repo
+      log_info "Klone dotfiles bare repo..."
+      git clone --bare "$dotfiles_repo" "$HOME/.dotfiles-repo.git"
+
+      # Define dotgit alias temporarily
+      alias dotgit='git --git-dir=$HOME/.dotfiles-repo.git --work-tree=$HOME'
+
+      # Checkout dotfiles
+      if ! dotgit checkout 2>/dev/null; then
+        log_warn "Checkout-Konflikt erkannt - sichere vorhandene Dateien"
+        mkdir -p "$HOME/.dotfiles-backup/conflicts"
+        dotgit checkout 2>&1 | grep -E "^\s+" | awk '{print $1}' | while read file; do
+          mkdir -p "$HOME/.dotfiles-backup/conflicts/$(dirname "$file")"
+          mv "$HOME/$file" "$HOME/.dotfiles-backup/conflicts/$file" 2>/dev/null || true
+        done
+        dotgit checkout
+      fi
+
+      # Hide untracked files
+      dotgit config --local status.showUntrackedFiles no
+
+      log_success "Dotfiles bare repo eingerichtet"
+      log_info "Nutze 'dotgit' Command für dotfiles git operations"
+    fi
+  fi
+}
+
+step_5_project_setup() {
+  log_info "Schritt 5/6: Projekt-Registry einrichten"
+
+  if ask_yes_no "Projekt-Registry einrichten?" "y"; then
+    # Erstelle Verzeichnisse
+    mkdir -p "$HOME/.zsh"
+    mkdir -p "$HOME/.config"
+    mkdir -p "$HOME/Dokumente/PhuDev"
+    mkdir -p "$HOME/Dokumente/K.I.T"
+    mkdir -p "$HOME/bin"
+
+    # Scripts kommen aus dotfiles (bereits in ~/bin nach checkout)
+    # Nur prüfen ob sie ausführbar sind
+    for script in add-project sync-projects project-setup sysutil bootstrap; do
+      [[ -f "$BIN_DIR/$script" ]] && chmod +x "$BIN_DIR/$script"
+    done
+
+    # Erstelle leere projects.zsh wenn nicht vorhanden
+    if [[ ! -f "$HOME/.zsh/projects.zsh" ]]; then
+      echo "typeset -g -A PROJ" > "$HOME/.zsh/projects.zsh"
+    fi
+
+    log_success "Projekt-Registry eingerichtet"
+  fi
+}
+
+step_6_finalize() {
+  log_info "Schritt 6/6: Finalisierung"
+
+  # Set zsh as default shell
+  if [[ "$SHELL" != "$(which zsh)" ]] && ask_yes_no "Zsh als Standard-Shell setzen?" "y"; then
+    chsh -s "$(which zsh)"
+    log_success "Zsh als Standard-Shell gesetzt"
+  fi
+
+  log_success "Bootstrap abgeschlossen!"
+  echo ""
+  log_info "Nächste Schritte:"
+  echo "  1. Dotfiles anpassen: ~/.zshrc"
+  echo "  2. Tmux-Integration aktivieren (optional): uncomment in .zshrc"
+  echo "  3. Neues Projekt erstellen: project-setup"
+  echo "  4. Shell neu starten: exec zsh"
+  echo ""
+  log_info "Verfügbare Tools: bootstrap, project-setup, sysutil, add-project, sync-projects"
+}
+
+# ===================================================================
+# Main
+# ===================================================================
+
+main() {
+  echo "╔════════════════════════════════════════════════════════════╗"
+  echo "║          🚀 Cisco Dev-Host Bootstrap                      ║"
+  echo "║          Reproduzierbares Arch Linux Setup                ║"
+  echo "╚════════════════════════════════════════════════════════════╝"
+  echo ""
+
+  check_arch
+
+  step_1_system_update
+  step_2_install_packages
+  step_3_oh_my_zsh
+  step_4_dotfiles
+  step_5_project_setup
+  step_6_finalize
+}
+
+main "$@"
