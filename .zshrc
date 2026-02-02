@@ -116,7 +116,7 @@ alias la='lsd -la'
 alias cat='bat'
 
 # Git
-alias dotgit='git --git-dir=$HOME/.dotfiles-repo.git --work-tree=$HOME'
+alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
 # Claude
 
