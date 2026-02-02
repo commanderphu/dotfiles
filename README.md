@@ -4,12 +4,18 @@ Personal dotfiles managed via Git bare repository.
 
 ## Branches
 
-| Branch | System | Beschreibung |
-|--------|--------|--------------|
-| `cisco` | Arch Linux (headless) | Dev-Host, Docker, Homelab |
-| `Flash-Inspired` | Fedora | barry Notebook, Mobile Workstation |
+| Branch | System | Host | Beschreibung |
+|--------|--------|------|--------------|
+| `cisco` | Arch Linux | cisco (headless) | Dev-Host, Docker, Homelab |
+| `Flash-Inspired` | Fedora | barry (Notebook) | Mobile Workstation |
 
-## Inhalt (cisco)
+---
+
+## cisco (Arch Linux)
+
+Headless Dev-Host mit 23+ Docker Containern, Homelab-Infrastruktur.
+
+### Inhalt
 
 ```
 .config/
@@ -37,8 +43,63 @@ bin/
 ├── sysutil             # System-Utilities (nvidia, rdp, vnc)
 ├── add-project         # Projekt zur Registry hinzufügen
 ├── sync-projects       # Projekt-Registry synchronisieren
-└── ...
+├── backup-thunderbird.sh
+├── restore-thunderbird.sh
+├── caddy-check.sh
+├── tmux-start.sh
+└── workmate-dev
 ```
+
+### Theme
+- **Terminal:** Catppuccin Frappé
+- **Font:** FiraCode Nerd Font
+- **Prompt:** Powerlevel10k
+
+---
+
+## Flash-Inspired (Fedora)
+
+Mobile Workstation für Kunden-/Remote-Arbeit, Audio-Produktion.
+
+### Inhalt
+
+```
+.config/
+├── alacritty/          # Terminal Emulator
+└── nvim/
+    ├── colors/flash.lua    # Custom Flash Theme
+    ├── init.lua
+    └── lua/plugins/
+        ├── cmp.lua         # Completion
+        ├── editing.lua     # Editor Enhancements
+        ├── gitsigns.lua    # Git Integration
+        ├── lsp.lua         # Language Server
+        ├── lualine.lua     # Statusline
+        ├── neo-tree.lua    # File Explorer
+        ├── telescope.lua   # Fuzzy Finder
+        ├── treesitter.lua  # Syntax Highlighting
+        └── ui.lua          # UI Enhancements
+
+.p10k.zsh               # Powerlevel10k Config
+.tmux.conf              # Tmux Config
+.zsh/                   # Zsh Modules
+.zshrc                  # Zsh Config
+
+bin/
+├── add-project
+├── sync-projects
+├── backup-thunderbird.sh
+├── restore-thunderbird.sh
+├── caddy-check.sh
+├── tmux-start.sh
+└── workmate-dev
+```
+
+### Theme
+- **Neovim:** Flash (Dunkelrot + Gold)
+- **Inspiration:** The Flash / S.T.A.R. Labs
+
+---
 
 ## Installation
 
@@ -51,8 +112,10 @@ git clone --bare git@github.com:commanderphu/dotfiles.git $HOME/.dotfiles-repo.g
 # 2. Alias definieren
 alias dotgit='git --git-dir=$HOME/.dotfiles-repo.git --work-tree=$HOME'
 
-# 3. Checkout (cisco oder Flash-Inspired)
-dotgit checkout cisco
+# 3. Checkout
+dotgit checkout cisco          # Arch Linux
+# oder
+dotgit checkout Flash-Inspired # Fedora
 
 # 4. Untracked Files ausblenden
 dotgit config --local status.showUntrackedFiles no
@@ -73,7 +136,9 @@ dotgit commit -m "update: zshrc"
 dotgit push
 ```
 
-## Tools
+---
+
+## Tools (cisco)
 
 | Tool | Zweck |
 |------|-------|
@@ -83,16 +148,20 @@ dotgit push
 | `pj <name>` | Zu Projekt springen |
 | `proj` | Projekt-Picker (fzf) |
 
-## Theme
+---
 
-- **Terminal:** Catppuccin Frappé
-- **Font:** FiraCode Nerd Font
-- **Prompt:** Powerlevel10k
+## S.T.A.R. Labs Homelab
 
-## Links
+Die Systeme sind nach **The Flash** benannt:
 
-- **Homelab Docs:** [star-labs-homelab](https://github.com/commanderphu/star-labs-homelab)
-- **Packages:** `~/.config/cisco-setup/packages/`
+| Host | Charakter | Rolle |
+|------|-----------|-------|
+| **cisco** | Cisco Ramon | Tech-Genius, Dev-Host |
+| **barry** | Barry Allen | The Flash, Mobile Workstation |
+| **gideon** | Gideon AI | NAS, Home Assistant, Wissensdatenbank |
+
+**Docs:** [star-labs-homelab](https://github.com/commanderphu/star-labs-homelab)
 
 ---
+
 **Maintainer:** Joshua Phu Kuhrau
