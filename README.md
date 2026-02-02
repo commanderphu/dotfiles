@@ -1,113 +1,98 @@
 # Dotfiles
 
-Personal dotfiles managed via bare Git repository.
+Personal dotfiles managed via Git bare repository.
 
-**Remote:** `git@github.com:commanderphu/dotfiles.git`
+## Branches
 
----
+| Branch | System | Beschreibung |
+|--------|--------|--------------|
+| `cisco` | Arch Linux (headless) | Dev-Host, Docker, Homelab |
+| `Flash-Inspired` | Fedora | barry Notebook, Mobile Workstation |
 
-## 📦 Tracked Configs
+## Inhalt (cisco)
 
-- **Shell:** `.zshrc` (zsh + Oh My Zsh + Powerlevel10k)
-- **Theme:** `.p10k.zsh` (Powerlevel10k config)
-- **Terminal:** `kitty/` (Terminal emulator)
-- **Multiplexer:** `.tmux.conf` (Catppuccin Frappe theme)
-- **Editor:** `nvim/` (Neovim with Lazy.nvim)
-- **Git:** `.gitconfig`
-- **Tools:** alacritty, btop, mc, neofetch configs
-- **Scripts:** `bin/` (Thunderbird backup/restore)
+```
+.config/
+├── alacritty/          # Terminal Emulator
+├── btop/               # System Monitor (Catppuccin)
+├── cisco-setup/        # Bootstrap Package-Listen
+│   └── packages/       # essential, development, optional
+├── kitty/              # Terminal (Catppuccin Frappé)
+├── mc/                 # Midnight Commander
+├── neofetch/           # System Info
+├── nvim/               # Neovim (Lazy, LSP, Telescope, Treesitter)
+├── projects            # Projekt-Registry
+└── starship.toml       # Prompt
 
----
+.gitconfig              # Git User, GPG, Credential Helper
+.p10k.zsh               # Powerlevel10k Config
+.ssh/config             # SSH Hosts (Server)
+.tmux.conf              # Tmux Config
+.zsh/                   # Zsh Modules
+.zshrc                  # Zsh Config
 
-## 🚀 Setup auf neuem System
+bin/
+├── bootstrap           # System-Setup für frischen Arch-Install
+├── project-setup       # Projekt-Scaffolding (FastAPI, React, Vue)
+├── sysutil             # System-Utilities (nvidia, rdp, vnc)
+├── add-project         # Projekt zur Registry hinzufügen
+├── sync-projects       # Projekt-Registry synchronisieren
+└── ...
+```
+
+## Installation
+
+### Frisches System
 
 ```bash
-# 1. Clone bare repository
+# 1. Repo klonen (bare)
 git clone --bare git@github.com:commanderphu/dotfiles.git $HOME/.dotfiles-repo.git
 
-# 2. Alias für dotgit erstellen
-echo 'alias dotgit="git --git-dir=$HOME/.dotfiles-repo.git --work-tree=$HOME"' >> ~/.zshrc
+# 2. Alias definieren
+alias dotgit='git --git-dir=$HOME/.dotfiles-repo.git --work-tree=$HOME'
 
-# 3. Checkout dotfiles
-dotgit checkout
+# 3. Checkout (cisco oder Flash-Inspired)
+dotgit checkout cisco
 
-# 4. Untracked files ausblenden
-dotgit config status.showUntrackedFiles no
+# 4. Untracked Files ausblenden
+dotgit config --local status.showUntrackedFiles no
 
-# 5. Shell neu laden
-source ~/.zshrc
+# 5. Bootstrap ausführen (nur cisco)
+~/bin/bootstrap
 ```
 
----
-
-## 🔧 Usage
+### Bestehendes System
 
 ```bash
-# Status checken
-dotgit status
+# Alias in .zshrc/.bashrc
+alias dotgit='git --git-dir=$HOME/.dotfiles-repo.git --work-tree=$HOME'
 
-# Dateien hinzufügen
-dotgit add .zshrc
-
-# Committen
-dotgit commit -m "update zshrc"
-
-# Pushen
+# Änderungen committen
+dotgit add ~/.zshrc
+dotgit commit -m "update: zshrc"
 dotgit push
-
-# Alle Changes auf einmal
-dotgit add -u && dotgit commit -m "chore: update configs" && dotgit push
 ```
 
----
+## Tools
 
-## 🛡️ Ignored Files
+| Tool | Zweck |
+|------|-------|
+| `bootstrap` | Komplettes System-Setup |
+| `project-setup` | Neues Projekt erstellen |
+| `sysutil` | Nvidia/RDP/VNC Diagnose & Setup |
+| `pj <name>` | Zu Projekt springen |
+| `proj` | Projekt-Picker (fzf) |
 
-Die folgenden Verzeichnisse werden bewusst **nicht** getrackt (siehe `.gitignore-dotfiles`):
+## Theme
 
-- `.config/thunderbird-profile/` - Enthält Secrets (logins, keys, cookies)
-- `.config/obs-studio/` - Host-spezifisch, ändert sich häufig
-- `obs-studio/` - Duplicate path cleanup
+- **Terminal:** Catppuccin Frappé
+- **Font:** FiraCode Nerd Font
+- **Prompt:** Powerlevel10k
 
-**Backup-Alternative:** Thunderbird Backup-Scripts in `bin/`
+## Links
 
----
-
-## 📂 Projekt-Navigation
-
-Aktiviert durch `init_setup.sh` aus [umbauphase_repo](https://github.com/commanderphu/umbauphase_repo):
-
-```bash
-# FZF Projekt-Picker
-proj
-
-# Direkt zu Projekt (Shortcut)
-pj workmate
-
-# Zoxide navigation
-j docs
-```
-
-**Config-Dateien:**
-- `~/.config/projects` - Projekt-Liste (Format: `label|/pfad`)
-- `~/.zsh/projects.zsh` - pj-Shortcuts Map
+- **Homelab Docs:** [star-labs-homelab](https://github.com/commanderphu/star-labs-homelab)
+- **Packages:** `~/.config/cisco-setup/packages/`
 
 ---
-
-## 🔗 Related Repos
-
-- **[umbauphase_repo](https://github.com/commanderphu/umbauphase_repo)** - Homelab Docs, Ansible, Scripts
-- **Setup-Scripts:** `scripts/init_setup.sh`, `scripts/project-setup.sh`
-
----
-
-## 📝 Notes
-
-- Bare repo Setup erlaubt dotfiles im $HOME ohne `.git` Folder
-- Keine Symlinks nötig (direkte Dateien)
-- Clean separation: Nur Config-Files getrackt, keine Secrets
-
----
-
-**Maintainer:** Joshua Phu Bein
-**Last major cleanup:** 2026-01-16 (Security fixes, removed 83 sensitive files)
+**Maintainer:** Joshua Phu Kuhrau
