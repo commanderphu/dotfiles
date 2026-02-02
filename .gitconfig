@@ -1,0 +1,16 @@
+[user]
+	email = joshua@phuonline.de
+	name = Phu
+	signingkey = 303841B3FCB6D80833B4ECB94F240832D9B18213
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[init]
+	defaultBranch = main
+[credential]
+	helper = store
+[commit]
+	gpgsign = true
