@@ -207,3 +207,25 @@ fi
 export PATH="$HOME/.local/bin/$PATH"
 export PATH="$HOME/go/bin:$PATH"
 export PATH="$HOME/.spicetify:$PATH"
+
+# ───────────────────────────────────────────────────────────────
+# ⚡ rbw (Rust Bitwarden) - Auto Unlock
+# ───────────────────────────────────────────────────────────────
+
+# Auto-Unlock beim Shell-Start (falls credentials vorhanden)
+if [[ -f "$HOME/gideon-stroage/secrets/bw_credentials" ]]; then
+  _rbw_unlock() {
+    if ! rbw unlocked &>/dev/null; then
+      PASSWORD=$(grep '^master-password:' "$HOME/gideon-stroage/secrets/bw_credentials" | cut -d' ' -f2-)
+      if [[ -n "$PASSWORD" ]]; then
+        echo "$PASSWORD" | rbw unlock &>/dev/null
+      fi
+    fi
+  }
+  _rbw_unlock
+fi
+
+# Aliases für schnellen Zugriff
+alias pw='rbw get'          # Passwort abrufen: pw github
+alias pwls='rbw ls'         # Alle Einträge listen
+alias pwsync='rbw sync'     # Mit Server synchronisieren
