@@ -41,41 +41,41 @@ history = 10000
 multiplier = 3
 
 # ─────────────────────────────────────────────────────────────
-# Flash Color Scheme - Dunkelrot mit Gold
+# NEOTERRA Color Scheme — Sovereign Dark
 # ─────────────────────────────────────────────────────────────
 [colors.primary]
-background = "#1a0a0a"
-foreground = "#f0c674"
+background = "#0B0E14"
+foreground = "#E6E9EF"
 
 [colors.cursor]
-cursor = "#f0b800"
-text = "#1a0a0a"
+cursor = "#F0B90B"
+text   = "#0B0E14"
 
 [colors.selection]
-background = "#5c1a1a"
-text = "#f0c674"
+background = "#D6A419"
+text       = "#0B0E14"
 
 # Normal colors
 [colors.normal]
-black   = "#1a0a0a"
-red     = "#cc2929"
-green   = "#f0b800"
-yellow  = "#e5a800"
-blue    = "#8b3a3a"
-magenta = "#a04040"
-cyan    = "#d4a000"
-white   = "#f0c674"
+black   = "#0B0E14"
+red     = "#8F1D2C"
+green   = "#2E7D32"
+yellow  = "#D6A419"
+blue    = "#1E3A5F"
+magenta = "#6B2D5E"
+cyan    = "#1A5F6B"
+white   = "#AAB2C5"
 
 # Bright colors
 [colors.bright]
-black   = "#4a1a1a"
-red     = "#ff4444"
-green   = "#ffd700"
-yellow  = "#ffcc00"
-blue    = "#b85454"
-magenta = "#cc5555"
-cyan    = "#ffb800"
-white   = "#fffacd"
+black   = "#1F2638"
+red     = "#C53030"
+green   = "#43A047"
+yellow  = "#F0B90B"
+blue    = "#2979CC"
+magenta = "#9B4D8E"
+cyan    = "#26A69A"
+white   = "#E6E9EF"
 
 # ─────────────────────────────────────────────────────────────
 # Cursor

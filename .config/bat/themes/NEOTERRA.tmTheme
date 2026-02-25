@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>name</key>
+  <string>NEOTERRA</string>
+  <key>settings</key>
+  <array>
+    <!-- Global -->
+    <dict>
+      <key>settings</key>
+      <dict>
+        <key>background</key>        <string>#0B0E14</string>
+        <key>foreground</key>        <string>#E6E9EF</string>
+        <key>caret</key>             <string>#F0B90B</string>
+        <key>selection</key>         <string>#D6A41940</string>
+        <key>selectionForeground</key><string>#E6E9EF</string>
+        <key>lineHighlight</key>     <string>#121826</string>
+        <key>invisibles</key>        <string>#1F2638</string>
+        <key>gutterForeground</key>  <string>#6B7280</string>
+        <key>gutterBackground</key>  <string>#0B0E14</string>
+      </dict>
+    </dict>
+
+    <!-- Kommentare → muted -->
+    <dict>
+      <key>name</key><string>Comment</string>
+      <key>scope</key><string>comment, punctuation.definition.comment</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key><string>#6B7280</string>
+        <key>fontStyle</key><string>italic</string>
+      </dict>
+    </dict>
+
+    <!-- Strings → text secondary -->
+    <dict>
+      <key>name</key><string>String</string>
+      <key>scope</key><string>string, string.quoted</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>#AAB2C5</string></dict>
+    </dict>
+
+    <!-- Keywords → Gold -->
+    <dict>
+      <key>name</key><string>Keyword</string>
+      <key>scope</key><string>keyword, keyword.control, keyword.operator, storage</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key><string>#D6A419</string>
+        <key>fontStyle</key><string>bold</string>
+      </dict>
+    </dict>
+
+    <!-- Funktionen → helles Gold -->
+    <dict>
+      <key>name</key><string>Function</string>
+      <key>scope</key><string>entity.name.function, support.function, meta.function-call</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>#F0B90B</string></dict>
+    </dict>
+
+    <!-- Klassen/Typen → Text primary -->
+    <dict>
+      <key>name</key><string>Class/Type</string>
+      <key>scope</key><string>entity.name.class, entity.name.type, support.class, support.type</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key><string>#E6E9EF</string>
+        <key>fontStyle</key><string>bold</string>
+      </dict>
+    </dict>
+
+    <!-- Zahlen → Gold bright -->
+    <dict>
+      <key>name</key><string>Number</string>
+      <key>scope</key><string>constant.numeric</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>#F0B90B</string></dict>
+    </dict>
+
+    <!-- Konstanten → Gold -->
+    <dict>
+      <key>name</key><string>Constant</string>
+      <key>scope</key><string>constant, constant.language, constant.character</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>#D6A419</string></dict>
+    </dict>
+
+    <!-- Variablen → Text primary -->
+    <dict>
+      <key>name</key><string>Variable</string>
+      <key>scope</key><string>variable, variable.other</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>#E6E9EF</string></dict>
+    </dict>
+
+    <!-- Parameter → Text secondary -->
+    <dict>
+      <key>name</key><string>Parameter</string>
+      <key>scope</key><string>variable.parameter</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>#AAB2C5</string></dict>
+    </dict>
+
+    <!-- Tags (HTML/XML) → Gold -->
+    <dict>
+      <key>name</key><string>Tag</string>
+      <key>scope</key><string>entity.name.tag, meta.tag</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>#D6A419</string></dict>
+    </dict>
+
+    <!-- Attribute → Text secondary -->
+    <dict>
+      <key>name</key><string>Attribute</string>
+      <key>scope</key><string>entity.other.attribute-name</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>#AAB2C5</string></dict>
+    </dict>
+
+    <!-- CSS Properties → Text secondary -->
+    <dict>
+      <key>name</key><string>CSS Property</string>
+      <key>scope</key><string>support.type.property-name</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>#AAB2C5</string></dict>
+    </dict>
+
+    <!-- Fehler / Invalid → Rot -->
+    <dict>
+      <key>name</key><string>Invalid</string>
+      <key>scope</key><string>invalid, invalid.illegal</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key><string>#C53030</string>
+        <key>fontStyle</key><string>bold</string>
+      </dict>
+    </dict>
+
+    <!-- Imports / Includes → muted text -->
+    <dict>
+      <key>name</key><string>Import</string>
+      <key>scope</key><string>keyword.control.import, keyword.other.import, meta.import</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>#6B7280</string></dict>
+    </dict>
+
+    <!-- Punctuation → muted -->
+    <dict>
+      <key>name</key><string>Punctuation</string>
+      <key>scope</key><string>punctuation, meta.brace, meta.bracket</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>#6B7280</string></dict>
+    </dict>
+
+    <!-- Operators → Gold -->
+    <dict>
+      <key>name</key><string>Operator</string>
+      <key>scope</key><string>keyword.operator.arithmetic, keyword.operator.comparison, keyword.operator.logical</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>#D6A419</string></dict>
+    </dict>
+
+  </array>
+</dict>
+</plist>

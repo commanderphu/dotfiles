@@ -1,0 +1,132 @@
+/**
+ * @name NEOTERRA
+ * @author einfachnurphu
+ * @version 3.0.0
+ * @description NEOTERRA on midnight-discord base — navy & subtle, gold for active
+ * @source https://github.com/refact0r/midnight-discord
+ **/
+
+/* ── Midnight als strukturelle Basis ─────────────────────────
+   Übernimmt: Panel-Separation, Borders, Animationen, Layout
+   ──────────────────────────────────────────────────────────── */
+@import url('https://refact0r.github.io/midnight-discord/build/midnight.css');
+
+/* ── NEOTERRA Farb-Override ──────────────────────────────── */
+body {
+  /* Font (optional — leer = Discord Standard) */
+  --font: '';
+  --code-font: '';
+
+  /* Layout */
+  --gap: 10px;
+  --border-thickness: 1px;
+  --divider-thickness: 3px;
+
+  /* ── Textfarben ──────────────────────────────────────── */
+  --text-0: #0B0E14;          /* Text auf farbigen Elementen */
+  --text-1: #E6E9EF;          /* Weißer Text */
+  --text-2: #C8CDD8;          /* Überschriften */
+  --text-3: #AAB2C5;          /* Normaler Text */
+  --text-4: #6B7280;          /* Icons / Channel-Namen */
+  --text-5: #3D4455;          /* Gedämpfte Channels */
+
+  /* ── Hintergründe ────────────────────────────────────── */
+  --bg-1: #1F2638;            /* Geklickte Buttons */
+  --bg-2: #161C2A;            /* Dunkle Buttons / Cards */
+  --bg-3: #0F1520;            /* Sekundäre Elemente */
+  --bg-4: #0B0E14;            /* Haupt-Hintergrund */
+
+  /* ── Hover / Active States → Navy ───────────────────── */
+  --hover:    hsla(215, 52%, 25%, 0.18);
+  --active:   hsla(215, 52%, 25%, 0.35);
+  --active-2: hsla(215, 52%, 25%, 0.50);
+  --message-hover: hsla(0, 0%, 0%, 0.08);
+
+  /* ── Akzent → Gold (Links, aktive Elemente) ──────────── */
+  --accent-1: var(--gold-1);
+  --accent-2: var(--gold-2);
+  --accent-3: var(--gold-3);
+  --accent-4: var(--gold-4);
+  --accent-5: var(--gold-5);
+  --accent-new: var(--navy-3);  /* Normalerweise Rot (Mute etc.) → Navy */
+
+  /* ── Mention-Hintergrund → Navy statt Blau ───────────── */
+  --mention:       linear-gradient(to right, hsla(215, 52%, 25%, 0.18) 40%, transparent);
+  --mention-hover: linear-gradient(to right, hsla(215, 52%, 25%, 0.10) 40%, transparent);
+  --reply:         linear-gradient(to right, hsla(220, 15%, 40%, 0.10) 40%, transparent);
+  --reply-hover:   linear-gradient(to right, hsla(220, 15%, 40%, 0.05) 40%, transparent);
+
+  /* ── Border ──────────────────────────────────────────── */
+  --border-light:  hsla(215, 40%, 30%, 0.12);
+  --border:        hsla(215, 40%, 30%, 0.22);
+  --border-subtle: hsla(215, 40%, 30%, 0.10);
+  --button-border: hsla(0, 0%, 100%, 0.08);
+
+  /* ── Status ──────────────────────────────────────────── */
+  --online:    #43A047;
+  --dnd:       #C53030;
+  --idle:      #D6A419;
+  --streaming: #7B5EA7;
+  --offline:   var(--text-4);
+
+  /* ── Gold-Palette ────────────────────────────────────── */
+  --gold-1: #F0B90B;
+  --gold-2: #D6A419;
+  --gold-3: #C49618;
+  --gold-4: #A07810;
+  --gold-5: #7A5C0C;
+
+  /* ── Navy-Palette ────────────────────────────────────── */
+  --navy-1: #6B9FD4;
+  --navy-2: #4A7AB4;
+  --navy-3: #2356A0;
+  --navy-4: #1E3A5F;
+  --navy-5: #152A45;
+
+  /* Midnight blue/red/etc. → NEOTERRA überschreiben */
+  --blue-1: #6B9FD4;
+  --blue-2: #5A8CC4;
+  --blue-3: #4A7AB4;
+  --blue-4: #3A68A4;
+  --blue-5: #2356A0;
+
+  --red-1: #E57373;
+  --red-2: #C53030;
+  --red-3: #B52A2A;
+  --red-4: #9E2424;
+  --red-5: #8F1D2C;
+
+  --green-1: #66BB6A;
+  --green-2: #43A047;
+  --green-3: #388E3C;
+  --green-4: #2E7D32;
+  --green-5: #1B5E20;
+
+  --yellow-1: #F0B90B;
+  --yellow-2: #D6A419;
+  --yellow-3: #C49618;
+  --yellow-4: #A07810;
+  --yellow-5: #7A5C0C;
+}
+
+/* ── Notification Badges → Gold ─────────────────────────── */
+[class*="numberBadge_"],
+[class*="textBadge_"],
+[class*="unreadPill_"],
+[class*="newBadge_"] {
+  background-color: #D6A419 !important;
+  color: #0B0E14 !important;
+  font-weight: 700 !important;
+}
+
+/* ── Rollen-Kreise gedämpft ──────────────────────────────── */
+[class*="roleCircle_"],
+[class*="roleDot_"] {
+  background-color: #2356A0 !important;
+}
+
+/* ── Premium / Nitro Gradient ────────────────────────────── */
+[class*="premiumGuildSubscribeButton_"],
+[class*="lookFilled_"][class*="premium_"] {
+  background: linear-gradient(135deg, #1E3A5F, #D6A419) !important;
+}

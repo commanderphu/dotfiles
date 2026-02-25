@@ -1,0 +1,78 @@
+# NEOTERRA btop theme
+# Sovereign dark — industrial, minimal
+
+# Main background (empty = terminal default)
+theme[main_bg]="#0B0E14"
+
+# Main text color
+theme[main_fg]="#AAB2C5"
+
+# Title color for boxes
+theme[title]="#E6E9EF"
+
+# Highlight color for selected items, text input and menu buttons
+theme[hi_fg]="#D6A419"
+
+# Background color of selected/focused items
+theme[selected_bg]="#1F2638"
+
+# Foreground color of selected/focused items
+theme[selected_fg]="#E6E9EF"
+
+# Color of inactive/disabled text
+theme[inactive_fg]="#6B7280"
+
+# Color of text appearing on top of graphs
+theme[graph_text]="#6B7280"
+
+# Misc colors for processes box including status indicators
+theme[proc_misc]="#D6A419"
+
+# CPU, Memory, Net, Proc box outline color
+theme[cpu_box]="#1F2638"
+theme[mem_box]="#1F2638"
+theme[net_box]="#1F2638"
+theme[proc_box]="#1F2638"
+
+# Box title colors
+theme[cpu_title]="#D6A419"
+theme[mem_title]="#D6A419"
+theme[net_title]="#D6A419"
+theme[proc_title]="#D6A419"
+
+# Temperature color gradient (cool → hot)
+theme[temp_start]="#2E7D32"
+theme[temp_mid]="#D6A419"
+theme[temp_end]="#C53030"
+
+# CPU graph gradient (low → high)
+theme[cpu_start]="#1F2638"
+theme[cpu_mid]="#8F1D2C"
+theme[cpu_end]="#C53030"
+
+# Memory gradient
+theme[free_start]="#1F2638"
+theme[free_mid]="#D6A419"
+theme[free_end]="#C53030"
+theme[cached_start]="#1F2638"
+theme[cached_mid]="#D6A419"
+theme[cached_end]="#F0B90B"
+theme[available_start]="#1F2638"
+theme[available_mid]="#2E7D32"
+theme[available_end]="#43A047"
+theme[used_start]="#1F2638"
+theme[used_mid]="#8F1D2C"
+theme[used_end]="#C53030"
+
+# Net graph — upload Gold, download muted
+theme[upload_start]="#1F2638"
+theme[upload_mid]="#D6A419"
+theme[upload_end]="#F0B90B"
+theme[download_start]="#1F2638"
+theme[download_mid]="#26A69A"
+theme[download_end]="#4DD0E1"
+
+# Process status colors
+theme[process_start]="#D6A419"
+theme[process_mid]="#AAB2C5"
+theme[process_end]="#6B7280"

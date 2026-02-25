@@ -1,0 +1,28 @@
+/* NEOTERRA — Spicetify user.css */
+
+/* Scrollbars */
+::-webkit-scrollbar             { width: 6px; }
+::-webkit-scrollbar-track       { background: transparent; }
+::-webkit-scrollbar-thumb       { background: #1F2638; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #D6A419; }
+
+/* Seekbar / Progress */
+.playback-bar .x-progressBar-fillColor    { background: #D6A419 !important; }
+.playback-bar .x-progressBar-sliderHandle { background: #F0B90B !important; }
+
+/* Volume */
+.volume-bar .x-progressBar-fillColor { background: #D6A419 !important; }
+
+/* Like button (active) */
+.control-button-heart[aria-checked="true"] { color: #D6A419 !important; }
+
+/* Active track title */
+.main-trackList-trackListRow--active .main-trackList-rowTitle {
+  color: #D6A419 !important;
+}
+
+/* Track title hover */
+.main-trackInfo-name:hover { color: #D6A419 !important; }
+
+/* Scrollbar selection highlight */
+::selection { background: rgba(214,164,25,0.25) !important; }

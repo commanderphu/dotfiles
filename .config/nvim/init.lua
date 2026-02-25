@@ -64,8 +64,14 @@ opt.mouse = "a"
 opt.completeopt = "menuone,noselect"
 opt.fillchars = { eob = " ", vert = "│" }
 
--- Flash Theme laden (falls vorhanden, sonst fallback)
-local ok = pcall(vim.cmd.colorscheme, "flash")
+-- Globale rounded Borders für LSP Floating Windows
+vim.lsp.handlers["textDocument/hover"] =
+  vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+vim.lsp.handlers["textDocument/signatureHelp"] =
+  vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
+
+-- NEOTERRA Theme laden
+local ok = pcall(vim.cmd.colorscheme, "neoterra")
 if not ok then
   vim.cmd.colorscheme("habamax")
 end

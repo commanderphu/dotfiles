@@ -1,5 +1,5 @@
 # ───────────────────────────────────────────────────────────────
-# ⚡ Powerlevel10k - Flash Theme
+# NEOTERRA — Powerlevel10k Theme
 # ───────────────────────────────────────────────────────────────
 
 'builtin' 'local' '-a' 'p10k_config_opts'
@@ -16,16 +16,19 @@
   autoload -Uz is-at-least && is-at-least 5.1 || return
 
   # ─────────────────────────────────────────────────────────────
-  # Flash Farben
+  # NEOTERRA Farben
   # ─────────────────────────────────────────────────────────────
-  local bg='#1a0a0a'
-  local gold='#f0c674'
-  local gold_bright='#f0b800'
-  local red='#cc2929'
-  local red_bright='#ff4444'
-  local red_dark='#5c1a1a'
-  local white='#fffacd'
-  local gray='#6a4a4a'
+  local bg='#0B0E14'
+  local surface='#121826'
+  local elevated='#1F2638'
+  local gold='#D6A419'
+  local gold_bright='#F0B90B'
+  local red='#8F1D2C'
+  local red_bright='#C53030'
+  local red_dark='#1F2638'
+  local text='#E6E9EF'
+  local text_sec='#AAB2C5'
+  local gray='#6B7280'
 
   # ─────────────────────────────────────────────────────────────
   # Prompt Layout
@@ -71,10 +74,10 @@
   typeset -g POWERLEVEL9K_RIGHT_PROMPT_FIRST_SEGMENT_START_SYMBOL=' '
 
   # ─────────────────────────────────────────────────────────────
-  # OS Icon - Flash Blitz
+  # OS Icon - NEOTERRA
   # ─────────────────────────────────────────────────────────────
-  typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=$red
-  typeset -g POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION='⚡'
+  typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=$gold
+  typeset -g POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION=''
 
   # ─────────────────────────────────────────────────────────────
   # Directory

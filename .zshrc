@@ -69,8 +69,8 @@ fi
 
 # Fallback-Prompt falls P10k nicht geladen
 if ! (( ${+functions[prompt_powerlevel10k_setup]} )); then
-  # Flash-Farben Fallback Prompt
-  PROMPT='%F{#cc2929}⚡%f %F{#f0b800}%n%f %F{#f0c674}%1~%f %F{#cc2929}>%f '
+  # NEOTERRA Fallback Prompt
+  PROMPT='%F{#D6A419}›%f %F{#E6E9EF}%n%f%F{#6B7280}@%f%F{#AAB2C5}%m%f %F{#D6A419}%1~%f %F{#1F2638}▸%f '
 fi
 
 # ───────────────────────────────────────────────────────────────
@@ -90,12 +90,13 @@ plugins=(
 # ⚡ Shell Tools
 # ───────────────────────────────────────────────────────────────
 
-# FZF mit Flash-Farben
+# FZF mit NEOTERRA-Farben
 export FZF_DEFAULT_OPTS="
-  --color=bg+:#5c1a1a,bg:#1a0a0a,spinner:#f0b800,hl:#cc2929
-  --color=fg:#f0c674,header:#cc2929,info:#f0b800,pointer:#f0b800
-  --color=marker:#f0b800,fg+:#fffacd,prompt:#cc2929,hl+:#ff4444
-  --border=rounded --prompt='⚡ '
+  --color=bg+:#1F2638,bg:#0B0E14,spinner:#F0B90B,hl:#D6A419
+  --color=fg:#AAB2C5,header:#6B7280,info:#D6A419,pointer:#F0B90B
+  --color=marker:#F0B90B,fg+:#E6E9EF,prompt:#D6A419,hl+:#F0B90B
+  --color=border:#1F2638,separator:#1F2638,scrollbar:#1F2638
+  --border=rounded --prompt='› ' --pointer='▸' --marker='◆'
 "
 
 [[ -f /usr/share/fzf/shell/key-bindings.zsh ]] && source /usr/share/fzf/shell/key-bindings.zsh
@@ -229,3 +230,20 @@ fi
 alias pw='rbw get'          # Passwort abrufen: pw github
 alias pwls='rbw ls'         # Alle Einträge listen
 alias pwsync='rbw sync'     # Mit Server synchronisieren
+
+# Bitwarden (offizielle CLI) - GPG-gesicherter Unlock
+alias bwu='export BW_SESSION=$(gpg --decrypt ~/.bw-master.asc 2>/dev/null | bw unlock --raw)'
+
+# ───────────────────────────────────────────────────────────────
+# ⚡ music-toggle 
+# ───────────────────────────────────────────────────────────────
+
+alias music='toggle-music'export PATH="$HOME/.deno/bin:$PATH"
+
+# Samsung TV Controller
+alias tv="python3 /home/einfachnurphu/tv.py"
+
+# GPG Signing
+export GPG_TTY=$(tty)
+export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+gpgconf --launch gpg-agent

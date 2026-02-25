@@ -13,10 +13,11 @@ return {
 
     telescope.setup({
       defaults = {
-        prompt_prefix = " 🔍 ",
-        selection_caret = " ➤ ",
+        prompt_prefix = "   ",
+        selection_caret = "  ",
         path_display = { "truncate" },
         sorting_strategy = "ascending",
+        borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
         layout_config = {
           horizontal = {
             prompt_position = "top",

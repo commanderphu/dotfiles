@@ -43,7 +43,7 @@ return {
     },
     config = function()
       require("notify").setup({
-        background_colour = "#000000",
+        background_colour = "#0B0E14",
         timeout = 2000,
         max_width = 60,
         render = "compact",
@@ -81,7 +81,7 @@ return {
       require("bufferline").setup({
         options = {
           mode = "buffers",
-          separator_style = "thin",
+          separator_style = "slant",
           show_buffer_close_icons = true,
           show_close_icon = false,
           diagnostics = "nvim_lsp",
