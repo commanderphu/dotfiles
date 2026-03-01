@@ -2,6 +2,8 @@
 # ⚡ ZSH Config - Flash Theme
 # ───────────────────────────────────────────────────────────────
 
+"$HOME/.local/bin/neoterra"
+
 # Powerlevel10k Instant Prompt (MUSS GANZ OBEN STEHEN)
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
@@ -119,20 +121,13 @@ alias cat='bat'
 # Git
 alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
-# Claude
+# Quick Navigation
+_nav() { (command -v z &>/dev/null && z "$@") || cd "$@"; }
+alias kit='_nav /mnt/cisco/phu-home/Dokumente/K.I.T'
+alias dev='_nav ~/Dokumente/PhuDev'
+alias infra='_nav /mnt/cisco/infra'
 
-# Quick Navigation (mit zoxide fallback zu cd)
-if command -v zoxide >/dev/null 2>&1; then
-  alias kit='z ~/Dokumente/K.I.T'
-  alias dev='z ~/Dokumente/PhuDev'
-  alias infra='z /srv/infra'
-else
-  alias kit='cd ~/Dokumente/K.I.T'
-  alias dev='cd ~/Dokumente/PhuDev'
-  alias infra='cd /srv/infra'
-fi
-
-# Caddy Shortcuts
+# External Alias Sources
 [[ -f ~/.config/zsh/caddy_aliases.sh ]] && source ~/.config/zsh/caddy_aliases.sh
 
 # ───────────────────────────────────────────────────────────────
@@ -205,7 +200,6 @@ alias tresor_close='tar -czf visions_of_life.tar.gz visions_of_life && gpg -c vi
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init zsh)"
 fi
-export PATH="$HOME/.local/bin/$PATH"
 export PATH="$HOME/go/bin:$PATH"
 export PATH="$HOME/.spicetify:$PATH"
 
@@ -214,10 +208,10 @@ export PATH="$HOME/.spicetify:$PATH"
 # ───────────────────────────────────────────────────────────────
 
 # Auto-Unlock beim Shell-Start (falls credentials vorhanden)
-if [[ -f "$HOME/gideon-stroage/secrets/bw_credentials" ]]; then
+if [[ -f "$HOME/gideon-storage/secrets/bw_credentials" ]]; then
   _rbw_unlock() {
     if ! rbw unlocked &>/dev/null; then
-      PASSWORD=$(grep '^master-password:' "$HOME/gideon-stroage/secrets/bw_credentials" | cut -d' ' -f2-)
+      PASSWORD=$(grep '^master-password:' "$HOME/gideon-storage/secrets/bw_credentials" | cut -d' ' -f2-)
       if [[ -n "$PASSWORD" ]]; then
         echo "$PASSWORD" | rbw unlock &>/dev/null
       fi
@@ -238,7 +232,8 @@ alias bwu='export BW_SESSION=$(gpg --decrypt ~/.bw-master.asc 2>/dev/null | bw u
 # ⚡ music-toggle 
 # ───────────────────────────────────────────────────────────────
 
-alias music='toggle-music'export PATH="$HOME/.deno/bin:$PATH"
+alias music='toggle-music'
+export PATH="$HOME/.deno/bin:$PATH"
 
 # Samsung TV Controller
 alias tv="python3 /home/einfachnurphu/tv.py"

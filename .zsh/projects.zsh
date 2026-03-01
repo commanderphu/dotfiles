@@ -25,3 +25,4 @@ PROJ[streamlabs]="/home/einfachnurphu/Dokumente/Streaming/streamlabs-api-demo"
 # Services & Infrastructure
 PROJ[api-hub]="/srv/services/phu-api-hub"
 PROJ[infra]="/srv/infra"
+PROJ[tv-remote]="/home/einfachnurphu/Dokumente/PhuDev/tv-remote"
